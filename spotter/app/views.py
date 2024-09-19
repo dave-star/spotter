@@ -133,6 +133,28 @@ class Home ( APIView ):
             msg['message'] = f"Found {len ( record )} record(s)!"
             msg['data'] = str ( record )
 
+        elif url == '/register':
+            elif url == '/register':
+            msg = {}
+            record = db.SelectRow ( cursor, 'users', f"email = '{data['email']}'" )
+            if record == 0:
+                msg = ut.Save ( cursor, data, 1, 'users', self.cols[3], conn )
+            else:
+                msg['status'] = 0
+                msg['message'] = f"Email address already exist!"
+        
+        elif url == '/login':
+            msg = {}
+            password = ut.Hash ( data['password'] )
+            msg['status'] = 1
+            record = db.Select ( cursor, 'users', f"email = '{data['email']}' and password='{password}'", self.cols[3] )
+            if len ( record ):
+                msg['message'] = f"Found {len ( record )} record(s)!"
+                msg['data'] = str ( record )
+            else:
+                msg['status'] = 0
+                msg['message'] = f"Invalid email address or password!"
+
         conn.close ( )
 
         # Return response to the client
