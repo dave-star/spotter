@@ -1,5 +1,6 @@
 import time
 from . import database as db
+import hashlib
 
 def Filter ( data ):
     new_data = {}
@@ -66,6 +67,12 @@ def GetRecord ( cursor, id, type_, cols, conn, url, request ):
     conn.commit ( )
     return msg
 
+def Hash ( string ):
+    hash_object = hashlib.sha256(string.encode('utf-8'))  
+    hex_dig = hash_object.hexdigest()
+
+    return hex_dig
+
 def DeleteRecord ( cursor, id, type_, table, cols, conn, url ):
     msg = {}
 
@@ -121,9 +128,11 @@ def Save ( cursor, data, type_, table, xcols, conn ):
                 count = -3
             else:
                 count = 0
+    elif table == 'users':
+        count = 0
     
     # Save book in database if no existing name was found!
-    if count == 0 and table == 'books' or count == 1 and table == 'authors' or count == 0 and table == 'favourites':
+    if count == 0 and table == 'books' or count == 1 and table == 'authors' or count == 0 and table == 'favourites' or count == 0 and table == 'users':
         # Prepare the query
         query = PrepareQuery ( data, cols, type_ )
         
@@ -143,6 +152,10 @@ def Save ( cursor, data, type_, table, xcols, conn ):
                 if table == 'books':
                     # Add the recorded data to the message sent to the client
                     record = db.Select ( cursor, table, f"name = '{data['name']}'", cols )
+                    msg['data'] = str ( record )
+                elif table == 'users':
+                    # Add the recorded data to the message sent to the client
+                    record = db.Select ( cursor, table, f"email = '{data['email']}'", cols )
                     msg['data'] = str ( record )
                 elif table == 'authors' or table == 'favourites':
                     # Add the recorded data to the message sent to the client
