@@ -10,4 +10,6 @@ urlpatterns = [
     path ( 'favourites/add', Home.as_view ( ), name = 'favourites_add' ),
     path ( 'favourites/remove/<str:id>', Home.as_view ( ), name = 'favourites_remove' ),
     path ( 'recommend', Home.as_view ( ), name = 'recommend' ),
+    path ( 'register', Home.as_view ( ), name = 'register' ),
+    path ( 'login', Home.as_view ( ), name = 'login' ),
 ]
